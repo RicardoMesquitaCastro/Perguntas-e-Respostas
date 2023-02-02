@@ -17,6 +17,7 @@ export class PainelComponent implements OnInit {
 
   public progresso: number = 0
 
+  public tentativas: number = 3
 
   constructor() {    
     
@@ -44,7 +45,12 @@ export class PainelComponent implements OnInit {
       this.progresso = this.progresso + (100 / this.frases.length)
 
     } else {
-      alert('A tradução está errada')
+      //diminuir a variavel tentativas
+      this.tentativas-- 
+
+      if(this.tentativas === -1){
+        alert('Você perdeu todas as tentativas')
+      }
     }
 
   }
