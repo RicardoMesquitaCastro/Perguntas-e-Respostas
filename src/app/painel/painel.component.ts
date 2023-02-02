@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { Frase } from '../shared/frase.model';
 import { FRASES } from './frases-mock';
 
@@ -7,25 +7,26 @@ import { FRASES } from './frases-mock';
   templateUrl: './painel.component.html',
   styleUrls: ['./painel.component.css']
 })
-export class PainelComponent implements OnInit {
+export class PainelComponent implements OnInit, OnDestroy {
 
   public frases: Frase[] = FRASES
   public instrucao: string = 'Traduza a frase'
   public resposta: string = ''
   public rodada: number = 0
-  public rodadaFrase!: Frase 
+  public rodadaFrase!: Frase;
 
   public progresso: number = 0
-
   public tentativas: number = 3
 
-  constructor() {    
-    
+  @Output() public encerrarJogo:EventEmitter<string> = new EventEmitter()
+  constructor() {
     this.atualizaRodada()
-    
   }
 
   ngOnInit() {
+  }
+  ngOnDestroy(){
+    console.log('Foi destruido')
   }
 
   public atualizaResposta(resposta: Event): void {
@@ -34,35 +35,36 @@ export class PainelComponent implements OnInit {
   }
 
   public verificarResposta(): void {
+    console.log(this.tentativas)
     // console.log('Verificar resposta: ', this.resposta)
     if (this.rodadaFrase.frasePtBr == this.resposta) {
-      alert('A tradução está correta.')
+      
       this.rodada++
 
-
-    this.atualizaRodada()
-
-      this.progresso = this.progresso + (100 / this.frases.length)
-
-    } else {
-      //diminuir a variavel tentativas
-      this.tentativas-- 
-
-      if(this.tentativas === -1){
-        alert('Você perdeu todas as tentativas')
+      if(this.rodada === 4) {
+        this.encerrarJogo.emit('vitoria')
       }
+      //atualiza o objeto rodadaFrase
+      this.atualizaRodada()
+
+      //progresso
+      this.progresso = this.progresso + (100 / this.frases.length)
+      
+      
+    } else {
+      this.tentativas--
+      
+      if(this.tentativas === -1) {
+       this.encerrarJogo.emit('derrota')
+      }
+      console.log(this.tentativas)
     }
-
   }
-
+  
   public atualizaRodada(): void{
-
-    //define a frase da rodada com base em alguma lógica
+    //define a frase da rodada com base em alguma lógica 
     this.rodadaFrase = this.frases[this.rodada]
-
     //limpar a resposta
     this.resposta = ''
-
-
   }
 }

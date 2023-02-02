@@ -6,5 +6,6 @@ export class Frase {
     //     this.fraseEng = fraseEng
     //     this.frasePtBr = frasePtBr
     // }
-    constructor(public fraseEng: string, public frasePtBr: string){}
+    constructor(public fraseEng: string, public frasePtBr: string){
+    }
 }
